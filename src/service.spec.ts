@@ -66,4 +66,28 @@ describe('obj-path', () => {
       expect(svc.get(obj, 'their', svc)).toEqual(svc);
     });
   });
+
+  describe('has', () => {
+    each([
+      [{a: 1}, 'a', true],
+      [{a: 1}, 'b', false],
+      [{a: {b: 42}}, 'a.b', true],
+      [{a: {b: 42}}, 'a.c', false],
+      [{a: null}, 'a.b', false],
+      [{a: null}, 'a', true],
+      [{a: 0}, 'a', true],
+      [{a: false}, 'a', true],
+      [{a: ''}, 'a', true],
+      [{a: undefined}, 'a', true],
+
+      [{'': 42}, '', true],
+      [{a: 42}, '', false],
+      [{a: 42}, null, false],
+      [{a: 42}, undefined, false],
+    ]).it('%j[%j] = %j', (src, path, expected) => {
+      const actual = svc.has(src, path);
+
+      expect(actual).toBe(expected);
+    })
+  });
 });
