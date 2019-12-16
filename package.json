@@ -1,0 +1,22 @@
+{
+  "name": "obj-path",
+  "version": "1.0.1",
+  "license": "MIT",
+  "description": "Operate with object via string path",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "str-esc": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "jest-each": "^24.9.0",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc --strict"
+  }
+}
