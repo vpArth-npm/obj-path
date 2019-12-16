@@ -1,6 +1,8 @@
 import { EscapeService } from 'str-esc';
 
 export interface ObjPathInterface {
+  has(data: any, path: string): boolean;
+
   get(data: any, path: string, def?: any): any;
 }
 
@@ -13,6 +15,20 @@ export class ObjPath implements ObjPathInterface {
 
   constructor(private separator = '.', private escape = '\\') {
     this.esc = new EscapeService(escape);
+  }
+
+  has(data: any, key: string | string[]): boolean {
+    if (key === undefined || key === null) return false;
+    const path = Array.isArray(key) ? key : this.path(key);
+    if (path.length === 0 || !data || !Object.keys(data).length) return false;
+
+    const index = path.shift();
+
+    if (path.length === 0) {
+      return this.flags[ObjPathFlagEnum.SKIP_PROTO_DATA] ? data.hasOwnProperty(index) : index in data;
+    }
+
+    return this.has(data[index], path);
   }
 
   get(data: any, key: string | string[], def: any = null): any {
@@ -28,7 +44,7 @@ export class ObjPath implements ObjPathInterface {
       return def;
     }
 
-    return this.get(data[k], path, def); //@ts-disable-line TS2538
+    return this.get(data[k], path, def);
   }
 
   path(key: string): string[] {
