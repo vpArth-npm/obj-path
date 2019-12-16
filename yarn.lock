@@ -2910,10 +2910,10 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
-str-esc@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/str-esc/-/str-esc-1.0.3.tgz#07050aebad3fc6965c0b81284780d177b3620270"
-  integrity sha512-SQ/dgImU7Hq8+DU9yXZI1fP2EVpVgoaWogvnbPNuQdidOWT6V4ZPepf84nudBbApmkGdP1ZYhLP18fNzqCnu+g==
+str-esc@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/str-esc/-/str-esc-1.0.5.tgz#d20bc166e734aa12a1078a4195092eff405da262"
+  integrity sha512-SPjFJSD4E95rK4u2rTGhYg8OGRYEgGS1/NKXE1bM/xYkoKiOoGUYuSEadlL7P2KzJyLxpLFCsFLlrZvyJUz8ug==
 
 string-length@^2.0.0:
   version "2.0.0"
