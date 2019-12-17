@@ -4,6 +4,8 @@ export interface ObjPathInterface {
   has(data: any, path: string): boolean;
 
   get(data: any, path: string, def?: any): any;
+
+  set(data: any, path: string, value: any): void;
 }
 
 export enum ObjPathFlagEnum {
@@ -45,6 +47,25 @@ export class ObjPath implements ObjPathInterface {
     }
 
     return this.get(data[k], path, def);
+  }
+
+  set(data: any, key: string | string[], value: any): void {
+    if (key === '' || key === []) return;
+    const path = Array.isArray(key) ? key : this.path(key);
+
+    const k = path.shift();
+
+    if (path.length === 0) {
+      data[k] = value;
+      return;
+    }
+
+    if (!data[k] ||
+      this.flags[ObjPathFlagEnum.SKIP_PROTO_DATA] && !data.hasOwnProperty(k) ||
+      typeof data[k] !== 'object') {
+      data[k] = {};
+    }
+    this.set(data[k], path, value);
   }
 
   path(key: string): string[] {
