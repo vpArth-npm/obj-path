@@ -1,5 +1,4 @@
-import { EscapeService } from 'str-esc';
-import { EscapeInterface } from 'str-esc/build/service';
+import { EscapeInterface, EscapeService } from '@vparth/str-esc';
 
 export interface ObjPathInterface {
   has(data: any, key: string): boolean;

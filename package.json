@@ -6,7 +6,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "str-esc": "^1.0.5"
+    "@vparth/str-esc": "^1.0.6"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",

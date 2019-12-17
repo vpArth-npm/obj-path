@@ -363,6 +363,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@vparth/str-esc@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@vparth/str-esc/-/str-esc-1.0.6.tgz#c8f86858744ed319524463cac06418b1c18db646"
+  integrity sha512-aLnNhSz/i32C937/xSp0FEkTHTaLJRgwTIM9J+IC3wsa8PXeNZOr9+Je7VaMC1R8fdEXpQPg47l0qDxMJepQ6A==
+
 abab@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"
@@ -2909,11 +2914,6 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
-
-str-esc@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/str-esc/-/str-esc-1.0.5.tgz#d20bc166e734aa12a1078a4195092eff405da262"
-  integrity sha512-SPjFJSD4E95rK4u2rTGhYg8OGRYEgGS1/NKXE1bM/xYkoKiOoGUYuSEadlL7P2KzJyLxpLFCsFLlrZvyJUz8ug==
 
 string-length@^2.0.0:
   version "2.0.0"
