@@ -3,7 +3,7 @@ import { ObjPath, ObjPathFlagEnum } from './service';
 
 describe('obj-path', () => {
   let svc: ObjPath;
-  beforeEach(() => svc = new ObjPath());
+  beforeEach(() => svc = ObjPath.create());
 
   describe('get', () => {
     each([
@@ -33,7 +33,7 @@ describe('obj-path', () => {
       [undefined, {a: {b: 42}}, {a: {b: 42}}, '.'],
       ['a.length', 2, {a: [3, 4]}, '.'],
     ]).it('%j is %j for %j with %s', (key, expected, obj, sep) => {
-      const svc    = new ObjPath(sep, '\\');
+      const svc    = ObjPath.create(sep, '\\');
       const actual = svc.get(obj, key);
 
       expect(actual).toEqual(expected);
@@ -47,8 +47,9 @@ describe('obj-path', () => {
         ['a.b', 16, {a: {}}, 16, '.'],
         ['a.b', 16, {a: {b: undefined}}, 16, '.'], // May be undefined is better here
         ['a.b', null, {a: {b: null}}, 16, '.'],
+        ['a.b.c', 16, {a: {b: ''}}, 16, '.'],
       ]).it('Default: %j is %j for %j; def: %j, sep: %s', (key, expected, obj, def, sep) => {
-        const svc    = new ObjPath(sep);
+        const svc    = ObjPath.create(sep);
         const actual = svc.get(obj, key, def);
 
         expect(actual).toEqual(expected);
@@ -93,6 +94,9 @@ describe('obj-path', () => {
 
   describe('set', () => {
     each([
+      [{a: 42}, '', 7, {a: 42}],
+      [{a: 42}, [], 7, {a: 42}],
+      [{a: 42}, [''], 7, {a: 42, '': 7}],
       [{}, 'Привет', 'Мир', {'Привет': 'Мир'}],
       [{a: {'Привет': 'мир'}}, 'a.Привет', 'Мир', {a: {'Привет': 'Мир'}}],
       [{a: {'Привет': 'мир'}}, ['a', 'Привет'], 'Мир', {a: {'Привет': 'Мир'}}],
@@ -103,8 +107,8 @@ describe('obj-path', () => {
       [{}, 'a.При\\.вет.1', 'Мир', {a: {'При.вет': {'1': 'Мир'}}}],
       [{a: {b: {c: [1]}}}, 'a.k.l.m', 7, {a: {b: {c: [1]}, k: {l: {m: 7}}}}],
       [{a: {b: {c: [1]}}}, 'x.k.l.m', 7, {a: {b: {c: [1]}}, x: {k: {l: {m: 7}}}}],
-    ]).it('%j[%j] = %j; result: %j', (obj, key, value, expected) => {
-      svc.set(obj, key, value);
+    ]).it('%j[%j] = %j; result: %j', (obj, key, defValue, expected) => {
+      svc.set(obj, key, defValue);
 
       expect(obj).toEqual(expected);
     });
@@ -121,6 +125,7 @@ describe('obj-path', () => {
       [{a: 12, b: [3, 4]}, 'b.0', {a: 12, b: [4]}],
       [{a: 12, b: [3]}, 'b.0', {a: 12, b: []}],
       [{a: 12, b: [3, 4]}, 'b.1', {a: 12, b: [3]}],
+      [{a: 12, b: [3, 4]}, ['b', '1'], {a: 12, b: [3]}],
       [{a: null, b: undefined}, 'a.x', {a: null, b: undefined}],
       [{a: null, b: undefined}, 'b.x', {a: null, b: undefined}],
       [{a: null, b: undefined}, 'a', {b: undefined}],
@@ -129,6 +134,61 @@ describe('obj-path', () => {
       svc.del(obj, key);
 
       expect(obj).toEqual(expected);
+    });
+  });
+
+  describe('flags', () => {
+    const checkObjProto = (obj) => {
+      expect(obj.foreign).toBe('alien');
+      expect('foreign' in obj).toBe(true);
+      expect(obj.hasOwnProperty('foreign')).toBe(false);
+
+      expect(svc.has(obj, 'foreign')).toBe(true);
+      expect(svc.has({obj}, 'obj.foreign')).toBe(true);
+      expect(svc.get({obj}, 'obj.foreign')).toBe('alien');
+
+      svc.setFlag(ObjPathFlagEnum.SKIP_PROTO_DATA, true);
+      expect(svc.has(obj, 'foreign')).toBe(false);
+      expect(svc.has({obj}, 'obj.foreign')).toBe(false);
+      expect(svc.get({obj}, 'obj.foreign')).toBe(null);
+      svc.set({obj}, 'obj.foreign', 'hello');
+      expect(svc.get({obj}, 'obj.foreign')).toBe('hello');
+      svc.del({obj}, 'obj.foreign');
+      expect('foreign' in obj).toBe(true);
+
+      svc.setFlag(ObjPathFlagEnum.SKIP_PROTO_DATA, false);
+      expect(svc.has(obj, 'foreign')).toBe(true);
+      expect(svc.has({obj}, 'obj.foreign')).toBe(true);
+      expect(svc.get({obj}, 'obj.foreign')).toBe('alien');
+
+      svc.set({obj}, 'obj.foreign', 'hello');
+      expect(svc.get({obj}, 'obj.foreign')).toBe('hello');
+      // Never delete prototype property
+      svc.del({obj}, 'obj.foreign');
+      expect(svc.get({obj}, 'obj.foreign')).toBe('alien');
+      expect('foreign' in obj).toBe(true);
+    };
+
+    it('Object.create', () => {
+      let obj = (<any>Object).create({foreign: 'alien'});
+      checkObjProto(obj);
+
+      obj = (<any>Object).create({foreign: 'alien'});
+      (<any>Object).assign(obj, {own: 42});
+      checkObjProto(obj);
+    });
+
+    it('proto', () => {
+      const proto = function () {};
+
+      proto.prototype.foreign = 'alien';
+
+      const obj = new proto();
+      checkObjProto(obj);
+
+      proto.prototype.foreign = 'alien'; // restore
+      (<any>Object).assign(obj, {own: 42});
+      checkObjProto(obj);
     });
   });
 });

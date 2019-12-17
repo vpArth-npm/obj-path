@@ -1,10 +1,12 @@
 import { EscapeService } from 'str-esc';
+import { EscapeInterface } from 'str-esc/build/service';
 
 export interface ObjPathInterface {
-  has(data: any, path: string): boolean;
-  get(data: any, path: string, def?: any): any;
-  set(data: any, path: string, value: any): void;
-  del(data: any, path: string): void;
+  has(data: any, key: string): boolean;
+  get(data: any, key: string, def?: any): any;
+  set(data: any, key: string, value: any): void;
+  del(data: any, key: string): void;
+  path(key: string): string[];
 }
 
 export enum ObjPathFlagEnum {
@@ -12,16 +14,17 @@ export enum ObjPathFlagEnum {
 }
 
 export class ObjPath implements ObjPathInterface {
-  private esc: EscapeService;
+  constructor(private separator, private esc: EscapeInterface) {
+  }
 
-  constructor(private separator = '.', private escape = '\\') {
-    this.esc = new EscapeService(escape);
+  static create(separator = '.', escape = '\\') {
+    return new ObjPath(separator, new EscapeService(escape));
   }
 
   has(data: any, key: string | string[]): boolean {
     if (key === undefined || key === null) return false;
     const path = Array.isArray(key) ? key : this.path(key);
-    if (path.length === 0 || !data || !Object.keys(data).length) return false;
+    if (path.length === 0 || !data) return false;
 
     const index = path.shift();
 
@@ -35,7 +38,7 @@ export class ObjPath implements ObjPathInterface {
   get(data: any, key: string | string[], def: any = null): any {
     if (data === undefined) return def;
     if (key === undefined || key === null || key.length === 0) return data;
-    if (!data || !Object.entries(data).length) return def;
+    if (!data) return def;
 
     const path = Array.isArray(key) ? key : this.path(key);
 
@@ -49,7 +52,7 @@ export class ObjPath implements ObjPathInterface {
   }
 
   set(data: any, key: string | string[], value: any): void {
-    if (key === '' || key === []) return;
+    if (key.length === 0) return;
     const path = Array.isArray(key) ? key : this.path(key);
 
     const k = path.shift();
@@ -68,7 +71,7 @@ export class ObjPath implements ObjPathInterface {
   }
 
   del(data: any, key: string | string[]): void {
-    if (key === '' || key === []) {
+    if (key.length === 0) {
       for (const k of Object.keys(data)) {
         delete data[k];
       }
@@ -101,4 +104,3 @@ export class ObjPath implements ObjPathInterface {
     this.flags[option] = value;
   }
 }
-
