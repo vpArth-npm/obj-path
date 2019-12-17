@@ -1,5 +1,5 @@
 {
-  "name": "obj-path",
+  "name": "@vparth/obj-path",
   "version": "1.0.1",
   "license": "MIT",
   "description": "Operate with object via string path",
