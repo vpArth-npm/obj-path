@@ -2,10 +2,9 @@ import { EscapeService } from 'str-esc';
 
 export interface ObjPathInterface {
   has(data: any, path: string): boolean;
-
   get(data: any, path: string, def?: any): any;
-
   set(data: any, path: string, value: any): void;
+  del(data: any, path: string): void;
 }
 
 export enum ObjPathFlagEnum {
@@ -68,6 +67,28 @@ export class ObjPath implements ObjPathInterface {
     this.set(data[k], path, value);
   }
 
+  del(data: any, key: string | string[]): void {
+    if (key === '' || key === []) {
+      for (const k of Object.keys(data)) {
+        delete data[k];
+      }
+      return;
+    }
+    const path = Array.isArray(key) ? key : this.path(key);
+    const last = path.pop();
+
+    let p = data;
+    for (const k of path) {
+      p = p[k];
+      if (!p) return;
+    }
+    if (Array.isArray(p) && parseInt(last, 10) < p.length) {
+      p.splice(+last, 1);
+    } else {
+      delete p[last];
+    }
+  }
+
   path(key: string): string[] {
     return this.esc.split(this.separator, key);
   }
@@ -79,6 +100,5 @@ export class ObjPath implements ObjPathInterface {
   public setFlag(option: ObjPathFlagEnum, value: boolean) {
     this.flags[option] = value;
   }
-
 }
 
