@@ -109,4 +109,26 @@ describe('obj-path', () => {
       expect(obj).toEqual(expected);
     });
   });
+
+  describe('del', () => {
+    each([
+      [{a: 12}, '', {}],
+      [{}, 'a.b', {}],
+      [{x: 'X'}, 'a.b', {x: 'X'}],
+      [{a: 12, b: 34}, 'b', {a: 12}],
+      [{a: 12, b: {c: 'b:c'}}, 'b.c', {a: 12, b: {}}],
+      [{a: 12, c: 2}, 'd.c', {a: 12, c: 2}],
+      [{a: 12, b: [3, 4]}, 'b.0', {a: 12, b: [4]}],
+      [{a: 12, b: [3]}, 'b.0', {a: 12, b: []}],
+      [{a: 12, b: [3, 4]}, 'b.1', {a: 12, b: [3]}],
+      [{a: null, b: undefined}, 'a.x', {a: null, b: undefined}],
+      [{a: null, b: undefined}, 'b.x', {a: null, b: undefined}],
+      [{a: null, b: undefined}, 'a', {b: undefined}],
+      [{a: null, b: undefined}, 'b', {a: null}],
+    ]).it('%j[%j] -> %j', (obj, key, expected) => {
+      svc.del(obj, key);
+
+      expect(obj).toEqual(expected);
+    });
+  });
 });
