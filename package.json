@@ -3,6 +3,10 @@
   "version": "1.0.1",
   "license": "MIT",
   "description": "Operate with object via string path",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vpArth-npm/obj-path.git"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
