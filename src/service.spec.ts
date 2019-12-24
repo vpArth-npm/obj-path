@@ -1,5 +1,6 @@
 import each from 'jest-each';
-import { ObjPath, ObjPathFlagEnum } from './service';
+import ObjPath from '.';
+import { ObjPathFlagEnum } from './service';
 
 describe('obj-path', () => {
   let svc: ObjPath;
